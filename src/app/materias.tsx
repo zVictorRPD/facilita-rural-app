@@ -12,7 +12,15 @@ export default function SubjectsScreen() {
   const [hours, setHours] = useState(0);
   const query = useQuery({
     queryKey: ["subjects", q, hours],
-    queryFn: () => api<{ subjects: { code: string; name: string; time: number }[] }>(`/subjects?page=1&code=${encodeURIComponent(q)}&name=${encodeURIComponent(q)}&time=${hours}`),
+    queryFn: () => {
+      const params = new URLSearchParams({ page: "1", time: String(hours) });
+      const term = q.trim();
+      if (term) {
+        if (/\d/.test(term)) params.set("code", term);
+        else params.set("name", term);
+      }
+      return api<{ subjects: { code: string; name: string; time: number }[] }>(`/subjects?${params.toString()}`);
+    },
   });
   const rows = query.data?.subjects ?? [];
   return (

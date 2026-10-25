@@ -18,7 +18,13 @@ export default function AddSubjectScreen() {
   const search = useQuery({
     queryKey: ["catalog", q],
     enabled: q.trim().length >= 2,
-    queryFn: () => api<{ subjects: { code: string; name: string; time: number }[] }>(`/subjects?name=${encodeURIComponent(q)}&code=${encodeURIComponent(q)}&page=1`),
+    queryFn: () => {
+      const term = q.trim();
+      const params = new URLSearchParams({ page: "1" });
+      if (/\d/.test(term)) params.set("code", term);
+      else params.set("name", term);
+      return api<{ subjects: { code: string; name: string; time: number }[] }>(`/subjects?${params.toString()}`);
+    },
   });
   const data = curriculum.data?.hasCurriculum ? curriculum.data : null;
   const periods = data?.periods ?? [];

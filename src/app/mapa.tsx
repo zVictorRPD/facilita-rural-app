@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Linking, Pressable, ScrollView, Text, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Icon } from "@/components/icon";
 import { Hairline, NavBar, Screen, SearchField } from "@/components/ui";
 import { places } from "@/data/places";
@@ -15,16 +15,23 @@ export default function MapScreen() {
     [query],
   );
   const selected = places.find((place) => place.id === selectedId) ?? null;
+  const mapsReady = Boolean(process.env.EXPO_PUBLIC_MAP_API_KEY);
 
   return (
     <Screen>
       <NavBar title="Mapa do campus" back="Mais" />
       <View style={{ flex: 1 }}>
-        <MapView style={{ flex: 1 }} initialRegion={{ latitude: -22.763, longitude: -43.695, latitudeDelta: 0.03, longitudeDelta: 0.03 }}>
-          {places.map((place) => (
-            <Marker key={place.id} coordinate={{ latitude: place.lat, longitude: place.lng }} pinColor={selectedId === place.id ? "#C53030" : "#2A4365"} onPress={() => setSelectedId(place.id)} />
-          ))}
-        </MapView>
+        {mapsReady ? (
+          <MapView provider={PROVIDER_GOOGLE} style={{ flex: 1 }} initialRegion={{ latitude: -22.763, longitude: -43.695, latitudeDelta: 0.03, longitudeDelta: 0.03 }}>
+            {places.map((place) => (
+              <Marker key={place.id} coordinate={{ latitude: place.lat, longitude: place.lng }} pinColor={selectedId === place.id ? "#C53030" : "#2A4365"} onPress={() => setSelectedId(place.id)} />
+            ))}
+          </MapView>
+        ) : (
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
+            <Text style={{ color: colors.muted, textAlign: "center" }}>O mapa não está disponível neste build.</Text>
+          </View>
+        )}
         <View style={{ position: "absolute", top: 10, left: 12, right: 12 }}>
           <View style={{ backgroundColor: colors.surface, borderRadius: 8, shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 8, elevation: 3 }}>
             <SearchField value={query} onChangeText={setQuery} placeholder="Buscar prédio ou sigla" />

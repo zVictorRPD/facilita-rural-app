@@ -68,6 +68,14 @@ export default function GradeScreen() {
     await api(path, { method, body: body ? JSON.stringify(body) : undefined });
     reload();
   };
+  const toggleFilter = (key: keyof typeof filter) => {
+    if (!data.hasCurriculum) return;
+    const next = { ...filter, [key]: !filter[key] };
+    client.setQueryData(["curriculum"], { ...data, filter: next });
+    api("/curriculum/filter", { method: "PATCH", body: JSON.stringify(next) }).catch(() => {
+      client.setQueryData(["curriculum"], data);
+    });
+  };
 
   return (
     <Screen>
@@ -136,7 +144,7 @@ export default function GradeScreen() {
       </Sheet>
       <Sheet visible={filterOpen} title="Exibir matérias" onClose={() => setFilterOpen(false)}>
         {([["obligatory", "Obrigatórias"], ["optional", "Optativas"], ["todo", "Pendentes"], ["doing", "Cursando"], ["done", "Aprovadas"]] as const).map(([key, label]) => (
-          <SheetRow key={key} label={`${label}${filter[key] ? "" : " · oculto"}`} selected={filter[key]} onPress={() => patch("/curriculum/filter", { ...filter, [key]: !filter[key] })} />
+          <SheetRow key={key} label={`${label}${filter[key] ? "" : " · oculto"}`} selected={filter[key]} onPress={() => toggleFilter(key)} />
         ))}
       </Sheet>
       <Sheet visible={periodOpen} title={period?.name ?? "Período"} onClose={() => setPeriodOpen(false)}>

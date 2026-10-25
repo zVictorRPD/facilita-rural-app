@@ -11,7 +11,8 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://facilita-rural-app-api.vercel.app/api"
+        "EXPO_PUBLIC_API_URL": "https://facilita-rural-app-api.vercel.app/api",
+        "EXPO_PUBLIC_MAP_API_KEY": "AIzaSyBe8KjBGPTtCk9Lei5YpfOIgVt3pnwjTEU"
       }
     },
     "production": {
@@ -19,7 +20,8 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://facilita-rural-app-api.vercel.app/api"
+        "EXPO_PUBLIC_API_URL": "https://facilita-rural-app-api.vercel.app/api",
+        "EXPO_PUBLIC_MAP_API_KEY": "AIzaSyBe8KjBGPTtCk9Lei5YpfOIgVt3pnwjTEU"
       }
     }
   }
