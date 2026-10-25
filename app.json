@@ -39,6 +39,14 @@
       "expo-secure-store",
       "expo-sharing",
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraProguardRules": "-keep class * extends androidx.room.RoomDatabase { <init>(); }\n-keep class * extends androidx.work.InputMerger { <init>(); }"
+          }
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "O Facilita Rural usa uma foto sua no perfil."
@@ -48,6 +56,16 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "a8ac4198-aab1-4b58-9808-f4b886a447e2"
+      }
     }
   }
 }
