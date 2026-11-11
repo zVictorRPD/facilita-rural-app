@@ -89,26 +89,28 @@ export default function GradeScreen() {
           </>
         }
       />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ maxHeight: 44, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.line, flexGrow: 0 }}>
-        {visible.map((item) => {
-          const on = item.id === currentId;
-          return (
-            <Pressable key={item.id} onPress={() => setPeriodId(item.id)} style={{ paddingHorizontal: 10, paddingTop: 11, paddingBottom: 9, borderBottomWidth: 2, borderBottomColor: on ? colors.brand : "transparent" }}>
-              <Text style={{ fontSize: 13, fontWeight: on ? "600" : "500", color: on ? colors.text : colors.muted }}>{item.name.replace(" período", "")}</Text>
-            </Pressable>
-          );
-        })}
-        <Pressable onPress={() => setAdding(true)} style={{ paddingHorizontal: 10, justifyContent: "center" }}>
-          <Text style={{ color: colors.link, fontSize: 13, fontWeight: "500" }}>+ Período</Text>
-        </Pressable>
-      </ScrollView>
+      <View style={{ height: 48, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.line }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 8 }}>
+          {visible.map((item) => {
+            const on = item.id === currentId;
+            return (
+              <Pressable key={item.id} onPress={() => setPeriodId(item.id)} style={{ justifyContent: "center", paddingHorizontal: 10, borderBottomWidth: 2, borderBottomColor: on ? colors.brand : "transparent" }}>
+                <Text style={{ fontSize: 13, lineHeight: 18, fontWeight: on ? "600" : "500", color: on ? colors.text : colors.muted }}>{item.name.replace(" período", "")}</Text>
+              </Pressable>
+            );
+          })}
+          <Pressable onPress={() => setAdding(true)} style={{ justifyContent: "center", paddingHorizontal: 10 }}>
+            <Text style={{ color: colors.link, fontSize: 13, lineHeight: 18, fontWeight: "500" }}>+ Período</Text>
+          </Pressable>
+        </ScrollView>
+      </View>
       <ScrollView>
         {period ? (
           <Section first>
             <Hairline first>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>{period.name}</Text>
-                <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2 }}>{subjects.length} matérias · {hours} h · {done} aprovadas · {doing} cursando</Text>
+                <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2, flexShrink: 1 }}>{subjects.length} matérias · {hours} h · {done} aprovadas · {doing} cursando</Text>
               </View>
               <Pressable onPress={() => setPeriodOpen(true)} hitSlop={8}><Icon name="more" size={22} color={colors.muted} strokeWidth={2.4} /></Pressable>
             </Hairline>

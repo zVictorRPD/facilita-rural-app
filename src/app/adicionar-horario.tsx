@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { api } from "@/api";
-import { Button, Field, NavBar, Screen } from "@/components/ui";
+import { Button, Field, Footer, NavBar, Screen } from "@/components/ui";
 import { COLOR_HEX, COLOR_TOKENS, placeSubject, type ColorToken, type Timetable } from "@/domain/timetable";
 import type { CurriculumResponse } from "@/types";
 import { useTheme } from "@/theme";
@@ -57,9 +57,9 @@ export default function AddTimetableScreen() {
           {message ? <Text style={{ color: colors.alert, marginTop: 12 }}>{message}</Text> : null}
         </View>
       </ScrollView>
-      <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.line }}>
+      <Footer>
         <Button label="Salvar horário" onPress={save} />
-      </View>
+      </Footer>
     </Screen>
   );
 }

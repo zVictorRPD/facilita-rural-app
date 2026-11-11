@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -30,7 +30,7 @@ export function AppBar({ title, subtitle, right }: { title: string; subtitle?: s
   return (
     <View style={{ backgroundColor: colors.surface, paddingHorizontal: 16, paddingTop: 6, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: colors.line, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
       <View style={{ flex: 1 }}>
-        {subtitle ? <Text style={{ fontSize: 12, color: colors.muted, fontWeight: "500" }} numberOfLines={1}>{subtitle}</Text> : null}
+        {subtitle ? <Text style={{ fontSize: 12, color: colors.muted, fontWeight: "500" }} numberOfLines={2}>{subtitle}</Text> : null}
         <Text style={{ fontSize: 22, fontWeight: "700", letterSpacing: -0.3, color: colors.text, marginTop: subtitle ? 1 : 0 }}>{title}</Text>
       </View>
       {right ? <View style={{ flexDirection: "row", gap: 14, alignItems: "center" }}>{right}</View> : null}
@@ -57,9 +57,9 @@ export function Section({ title, action, children, first = false }: { title?: st
   return (
     <View style={{ backgroundColor: colors.surface, marginTop: first ? 0 : 10, borderTopWidth: first ? 0 : 1, borderBottomWidth: 1, borderColor: colors.line }}>
       {title || action ? (
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", paddingHorizontal: 16, paddingTop: 10, paddingBottom: 6 }}>
-          <Text style={{ fontSize: 11, fontWeight: "600", letterSpacing: 0.7, color: colors.muted, textTransform: "uppercase" }}>{title}</Text>
-          {action}
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: 12, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 6 }}>
+          <Text style={{ flex: 1, fontSize: 11, fontWeight: "600", letterSpacing: 0.7, color: colors.muted, textTransform: "uppercase" }}>{title}</Text>
+          {action ? <View style={{ flexShrink: 0 }}>{action}</View> : null}
         </View>
       ) : null}
       {children}
@@ -98,16 +98,87 @@ export function Empty({ children }: { children: string }) {
   return <Text style={{ color: colors.muted, fontSize: 13, lineHeight: 19, textAlign: "center", paddingHorizontal: 24, paddingVertical: 22 }}>{children}</Text>;
 }
 
+export function Select({
+  label,
+  value,
+  placeholder,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+}) {
+  const { colors } = useTheme();
+  const [open, setOpen] = useState(false);
+  const selected = options.find((option) => option.value === value);
+  return (
+    <View style={{ gap: 5 }}>
+      <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text2 }}>{label}</Text>
+      <Pressable
+        onPress={() => setOpen(true)}
+        style={{ height: 40, borderWidth: 1, borderColor: colors.line, borderRadius: 8, paddingHorizontal: 11, backgroundColor: colors.surface, flexDirection: "row", alignItems: "center", gap: 8 }}
+      >
+        <Text style={{ flex: 1, fontSize: 14, color: selected ? colors.text : colors.muted }} numberOfLines={1}>
+          {selected?.label ?? placeholder}
+        </Text>
+        <View style={{ transform: [{ rotate: "90deg" }] }}>
+          <Icon name="chev" size={16} color={colors.muted} />
+        </View>
+      </Pressable>
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Pressable onPress={() => setOpen(false)} style={{ flex: 1, backgroundColor: colors.overlay, justifyContent: "center", padding: 24 }}>
+          <Pressable onPress={() => undefined} style={{ backgroundColor: colors.surface, borderRadius: 12, maxHeight: "70%", overflow: "hidden" }}>
+            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 8 }}>{label}</Text>
+            <ScrollView>
+              {options.map((option) => {
+                const on = option.value === value;
+                return (
+                  <Pressable
+                    key={option.value}
+                    onPress={() => {
+                      onChange(option.value);
+                      setOpen(false);
+                    }}
+                    style={{ minHeight: 48, paddingHorizontal: 16, flexDirection: "row", alignItems: "center", gap: 12, borderTopWidth: 1, borderTopColor: colors.line }}
+                  >
+                    <Text style={{ flex: 1, fontSize: 15, color: colors.text, fontWeight: on ? "600" : "400" }}>{option.label}</Text>
+                    {on ? <Icon name="check" size={18} color={colors.link} strokeWidth={2.2} /> : null}
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </View>
+  );
+}
+
+export function Footer({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: Math.max(insets.bottom, 16), backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.line }}>
+      {children}
+    </View>
+  );
+}
+
 export function Button({
   label,
   onPress,
   loading,
+  disabled,
   variant = "solid",
   small,
 }: {
   label: string;
   onPress: () => void;
   loading?: boolean;
+  disabled?: boolean;
   variant?: "solid" | "sec" | "danger";
   small?: boolean;
 }) {
@@ -115,11 +186,12 @@ export function Button({
   const background = variant === "solid" ? colors.primary : variant === "danger" ? colors.alert : colors.surface;
   const color = variant === "sec" ? colors.text : colors.primaryInk;
   const border = variant === "sec" ? colors.line : background;
+  const inactive = loading || disabled;
   return (
     <Pressable
       onPress={onPress}
-      disabled={loading}
-      style={{ height: small ? 34 : 44, borderRadius: 8, backgroundColor: background, borderWidth: 1, borderColor: border, alignItems: "center", justifyContent: "center", paddingHorizontal: small ? 14 : 16, alignSelf: small ? "flex-start" : "stretch", opacity: loading ? 0.6 : 1 }}
+      disabled={inactive}
+      style={{ height: small ? 34 : 44, borderRadius: 8, backgroundColor: background, borderWidth: 1, borderColor: border, alignItems: "center", justifyContent: "center", paddingHorizontal: small ? 14 : 16, alignSelf: small ? "flex-start" : "stretch", opacity: inactive ? 0.45 : 1 }}
     >
       {loading ? <ActivityIndicator color={color} /> : <Text style={{ color, fontSize: small ? 13 : 15, fontWeight: "600" }}>{label}</Text>}
     </Pressable>

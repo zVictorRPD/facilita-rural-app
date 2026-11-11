@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { api } from "@/api";
-import { Button, Field, NavBar, Screen } from "@/components/ui";
+import { Button, Field, Footer, NavBar, Screen } from "@/components/ui";
 import type { CalendarEvent } from "@/types";
 import { useTheme } from "@/theme";
 
@@ -49,9 +49,9 @@ export default function EventScreen() {
           </View>
         ) : null}
       </ScrollView>
-      <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.line }}>
+      <Footer>
         <Button label={current ? "Salvar" : "Adicionar"} onPress={save} />
-      </View>
+      </Footer>
     </Screen>
   );
 }

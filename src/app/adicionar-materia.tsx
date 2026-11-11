@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { api } from "@/api";
-import { Button, Empty, Hairline, NavBar, Screen, SearchField, Seg } from "@/components/ui";
+import { Button, Empty, Footer, Hairline, NavBar, Screen, SearchField, Seg } from "@/components/ui";
 import type { CurriculumResponse } from "@/types";
 import { useTheme } from "@/theme";
 
@@ -58,9 +58,9 @@ export default function AddSubjectScreen() {
           <Seg options={[{ id: "false", label: "Obrigatória" }, { id: "true", label: "Optativa" }]} value={optional} onChange={setOptional} />
         </View>
       </View>
-      <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.line }}>
+      <Footer>
         <Button label="Adicionar à grade" onPress={add} />
-      </View>
+      </Footer>
     </Screen>
   );
 }
